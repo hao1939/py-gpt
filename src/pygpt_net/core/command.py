@@ -14,6 +14,8 @@ import json
 
 from pygpt_net.item.ctx import CtxItem
 
+from .tools import available_functions
+
 
 class Command:
     def __init__(self, window=None):
@@ -243,6 +245,15 @@ class Command:
         packed = ""
         for cmd in cmds:
             packed += "~###~" + json.dumps(cmd) + "~###~"
+            # TODO call function here
+            function_name = cmd["cmd"]
+            function_to_call = available_functions[function_name]
+            if function_to_call is None:
+                print("Function not found: " + function_name)
+                continue
+            params = cmd["params"]
+            function_response = function_to_call(**params)
+            packed += function_response
         return packed
 
     def append_tool_calls(self, ctx: CtxItem):
