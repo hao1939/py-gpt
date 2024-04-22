@@ -117,6 +117,8 @@ class Output:
 
                     # chat and vision
                     if response_mode == "chat" or response_mode == "vision":
+                        if not chunk.choices:  # emtpy chunk
+                            continue
                         if chunk.choices[0].delta and chunk.choices[0].delta.content is not None:
                             response = chunk.choices[0].delta.content
                         elif chunk.choices[0].delta and chunk.choices[0].delta.tool_calls:

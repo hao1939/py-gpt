@@ -9,7 +9,7 @@
 # Updated Date: 2024.05.01 17:00:00                  #
 # ================================================== #
 
-from openai import OpenAI
+from openai import AzureOpenAI
 
 from pygpt_net.core.bridge import BridgeContext
 
@@ -38,7 +38,7 @@ class Gpt:
         self.summarizer = Summarizer(window)
         self.vision = Vision(window)
 
-    def get_client(self) -> OpenAI:
+    def get_client(self) -> AzureOpenAI:
         """
         Return OpenAI client
 
@@ -52,7 +52,21 @@ class Gpt:
             endpoint = self.window.core.config.get('api_endpoint')
             if endpoint:
                 args["base_url"] = endpoint
-        return OpenAI(**args)
+
+# client = AzureOpenAI(
+#   azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT"),
+#   api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+#   api_version="2024-02-01"
+# )
+        client = AzureOpenAI(
+            azure_endpoint=endpoint,
+            api_key=self.window.core.config.get('api_key'),
+            # TODO, HARD CODED   api_version="2024-02-15-preview"
+            # api_version="2024-02-01"  # "2024-02-15-preview"
+            api_version="2024-02-15-preview"
+
+        )
+        return client
 
     def call(self, context: BridgeContext, extra: dict = None) -> bool:
         """
@@ -197,14 +211,13 @@ class Gpt:
         messages = []
         messages.append({"role": "system", "content": system_prompt})
         messages.append({"role": "user", "content": prompt})
-        additional_kwargs = {}
-        if max_tokens > 0:
-            additional_kwargs["max_tokens"] = max_tokens
-        
+
         try:
             response = client.chat.completions.create(
                 messages=messages,
-                model=model.id,
+                # model=model.id,
+                model="gpt4",
+                max_tokens=max_tokens,
                 temperature=temperature,
                 top_p=1.0,
                 frequency_penalty=0.0,

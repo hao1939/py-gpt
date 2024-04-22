@@ -99,7 +99,8 @@ class Chat:
 
         response = client.chat.completions.create(
             messages=messages,
-            model=model.id,
+            # model=model.id,
+            model="gpt4",
             temperature=self.window.core.config.get('temperature'),
             top_p=self.window.core.config.get('top_p'),
             frequency_penalty=self.window.core.config.get('frequency_penalty'),
