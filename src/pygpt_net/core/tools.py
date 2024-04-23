@@ -1,4 +1,5 @@
 import json
+import subprocess
 
 # Example function hard coded to return the same weather
 # In production, this could be your backend API or an external API
@@ -16,10 +17,18 @@ def get_current_weather(location, unit="fahrenheit"):
         return json.dumps({"location": location, "temperature": "unknown"})
 
 
-# execute_az_cmd is a function that simulates executing an Azure CLI command
+
 def execute_az_cmd(command):
-    """Execute an Azure CLI command"""
-    return json.dumps({"cmd": command, "output": "dry run successful"})
+    output = "command output: "
+    try:
+        """Execute an Azure CLI command"""
+        # return json.dumps({"cmd": command, "output": "dry run successful"})
+        # os.system(command)
+        output = subprocess.check_output(command, shell=True,
+                                         text=True, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        output = e.output
+    return output
 
 
 # tools_map is a map of name to function
