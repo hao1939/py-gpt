@@ -10,12 +10,13 @@
 # ================================================== #
 
 from datetime import datetime
-from PySide6.QtGui import QTextCursor, QTextBlockFormat
+
+from PySide6.QtGui import QTextBlockFormat, QTextCursor
 
 from pygpt_net.core.render.base import BaseRenderer
+from pygpt_net.item.ctx import CtxItem
 from pygpt_net.ui.widget.textarea.input import ChatInput
 from pygpt_net.ui.widget.textarea.output import ChatOutput
-from pygpt_net.item.ctx import CtxItem
 from pygpt_net.utils import trans
 
 
@@ -152,7 +153,7 @@ class Renderer(BaseRenderer):
         self.append_raw(text.strip())
         self.to_end()
 
-    def append_extra(self, item: CtxItem):
+    def append_extra(self, item: CtxItem, footer: bool = False):
         """
         Append extra data (images, files, etc.) to output
 
