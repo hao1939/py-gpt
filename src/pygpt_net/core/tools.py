@@ -31,8 +31,30 @@ def execute_az_cmd(command):
     return output
 
 
+
+from azure.kusto.data import KustoClient, KustoConnectionStringBuilder
+from azure.kusto.data.helpers import dataframe_from_result_table
+
+connection_string = "https://aks.kusto.windows.net/"
+db = "AKSprod"
+
+kcsb = KustoConnectionStringBuilder.with_az_cli_authentication(connection_string)
+# It is a good practice to re-use the KustoClient instance, as it maintains a pool of connections to the Kusto service.
+# This sample shows how to create a client and close it in the same scope, for demonstration purposes.
+
+client = KustoClient(kcsb)
+
+# run kusto query and return result in json
+def run_kusto_query(query):
+    print("Running query: ", query)
+    # with KustoClient(kcsb) as client:
+    response = client.execute(db, query)
+    dataframe = dataframe_from_result_table(response.primary_results[0])
+    return dataframe.to_json()
+
 # tools_map is a map of name to function
 available_functions = {
     "get_current_weather": get_current_weather,
     "execute_az_cmd": execute_az_cmd,
+    "run_kusto_query": run_kusto_query
 }
